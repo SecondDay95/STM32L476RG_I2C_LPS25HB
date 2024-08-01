@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "lps25hb.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,23 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LPS25HB_ADDR			0xBA
 
-#define LPS25HB_WHO_AM_I 		0x0F
-#define LPS25HB_CTRL_REG1 		0x20
-#define LPS25HB_CTRL_REG2 		0x21
-#define LPS25HB_CTRL_REG3 		0x22
-#define LPS25HB_CTRL_REG4 		0x23
-#define LPS25HB_PRESS_OUT_XL 	0x28
-#define LPS25HB_PRESS_OUT_L 	0x29
-#define LPS25HB_PRESS_OUT_H 	0x2A
-#define LPS25HB_TEMP_OUT_L 		0x2B
-#define LPS25HB_TEMP_OUT_H 		0x2C
-
-#define LPS25HB_CTRL_REG1_PD 	0x80
-#define LPS25HB_CTRL_REG1_ODR2 	0x40
-#define LPS25HB_CTRL_REG1_ODR1 	0x20
-#define LPS25HB_CTRL_REG1_ODR0 	0x10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -82,23 +67,6 @@ int __io_putchar(int ch)
   HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
 
   return 1;
-}
-
-//Funkcja odczytujaca zawartosc rejestru czujnika LPS25HB:
-uint8_t lps_read_reg(uint8_t reg) {
-
-	uint8_t value = 0;
-	HAL_I2C_Mem_Read(&hi2c1, LPS25HB_ADDR, reg, 1, &value, sizeof(value), HAL_MAX_DELAY);
-
-	return value;
-
-}
-
-//Funkcja zapisujaca wartosc do rejestru czujnika LPS25HB:
-void lps_write_reg(uint8_t reg, uint8_t value) {
-
-	HAL_I2C_Mem_Write(&hi2c1, LPS25HB_ADDR, reg, 1, &value, sizeof(value), HAL_MAX_DELAY);
-
 }
 
 /* USER CODE END 0 */
@@ -136,38 +104,20 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  //
   printf("Searching...\n");
-  uint8_t who_am_i = lps_read_reg(LPS25HB_WHO_AM_I);
+  if(lps25hb_init() == HAL_OK) {
 
-  if(who_am_i == 0xBD) {
-	  printf("Found: LPS25HB\n");
-	  //Wybudzenie czujnika i ustawienie cyklicznego pomiaru na 25Hz:
-	  lps_write_reg(LPS25HB_CTRL_REG1, LPS25HB_CTRL_REG1_PD | LPS25HB_CTRL_REG1_ODR2);
-	  HAL_Delay(100);
+	  printf("OK: LPS25HB\n");
 
-	  //Odczyt temperatury z czujnika LPS25HB:
-	  int16_t temp;
-	  uint8_t temp_lsb;
-	  uint8_t temp_msb;
-	  temp_lsb = lps_read_reg(LPS25HB_TEMP_OUT_L);
-	  temp_msb = lps_read_reg(LPS25HB_TEMP_OUT_H);
-	  temp = (temp_msb << 8) | temp_lsb;
-	  printf("T = %.1f*C\n", 42.5f + temp / 480.0f);
-
-	  //Odczyt ciśnienia bezwzględnego z czujnika LPS25HB:
-	  int32_t pressure = 0;
-	  uint8_t pressure_l;
-	  uint8_t pressure_h;
-	  uint8_t pressure_xl;
-	  pressure_l = lps_read_reg(LPS25HB_PRESS_OUT_L);
-	  pressure_h = lps_read_reg(LPS25HB_PRESS_OUT_H);
-	  pressure_xl = lps_read_reg(LPS25HB_PRESS_OUT_XL);
-	  pressure = (pressure_h << 16) | (pressure_l << 8) | pressure_xl;
-	  printf("p = %lu hPa\n", pressure / 4096);
   }
   else {
-	  printf("Error (0x%02X)\n", who_am_i);
+
+	  printf("Error: LPS25HB not found\n");
+	  Error_Handler();
+
   }
+  HAL_Delay(100);
 
   /* USER CODE END 2 */
 
@@ -175,6 +125,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  printf("T = %.1f *C\n", lps25hp_read_temp());
+	  printf("p = %.1f hPa\n", lps25hb_read_pressure());
+	  HAL_Delay(1000);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
