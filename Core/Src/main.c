@@ -145,6 +145,7 @@ int main(void)
 	  lps_write_reg(LPS25HB_CTRL_REG1, LPS25HB_CTRL_REG1_PD | LPS25HB_CTRL_REG1_ODR2);
 	  HAL_Delay(100);
 
+	  //Odczyt temperatury z czujnika LPS25HB:
 	  int16_t temp;
 	  uint8_t temp_lsb;
 	  uint8_t temp_msb;
@@ -152,6 +153,17 @@ int main(void)
 	  temp_msb = lps_read_reg(LPS25HB_TEMP_OUT_H);
 	  temp = (temp_msb << 8) | temp_lsb;
 	  printf("T = %.1f*C\n", 42.5f + temp / 480.0f);
+
+	  //Odczyt ciśnienia bezwzględnego z czujnika LPS25HB:
+	  int32_t pressure = 0;
+	  uint8_t pressure_l;
+	  uint8_t pressure_h;
+	  uint8_t pressure_xl;
+	  pressure_l = lps_read_reg(LPS25HB_PRESS_OUT_L);
+	  pressure_h = lps_read_reg(LPS25HB_PRESS_OUT_H);
+	  pressure_xl = lps_read_reg(LPS25HB_PRESS_OUT_XL);
+	  pressure = (pressure_h << 16) | (pressure_l << 8) | pressure_xl;
+	  printf("p = %lu hPa\n", pressure / 4096);
   }
   else {
 	  printf("Error (0x%02X)\n", who_am_i);
