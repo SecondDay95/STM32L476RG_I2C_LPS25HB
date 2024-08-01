@@ -34,7 +34,18 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define LPS25HB_ADDR			0xBA
 
+#define LPS25HB_WHO_AM_I 		0x0F
+#define LPS25HB_CTRL_REG1 		0x20
+#define LPS25HB_CTRL_REG2 		0x21
+#define LPS25HB_CTRL_REG3 		0x22
+#define LPS25HB_CTRL_REG4 		0x23
+#define LPS25HB_PRESS_OUT_XL 	0x28
+#define LPS25HB_PRESS_OUT_L 	0x29
+#define LPS25HB_PRESS_OUT_H 	0x2A
+#define LPS25HB_TEMP_OUT_L 		0x2B
+#define LPS25HB_TEMP_OUT_H 		0x2C
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,6 +77,16 @@ int __io_putchar(int ch)
   HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
 
   return 1;
+}
+
+//Funkcja odczytujaca zawartosc rejestru czujnika LPS25HB:
+uint8_t lps_read_reg(uint8_t reg) {
+
+	uint8_t value = 0;
+	HAL_I2C_Mem_Read(&hi2c1, LPS25HB_ADDR, reg, 1, &value, sizeof(value), HAL_MAX_DELAY);
+
+	return value;
+
 }
 
 /* USER CODE END 0 */
@@ -102,6 +123,16 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  printf("Searching...\n");
+  uint8_t who_am_i = lps_read_reg(LPS25HB_WHO_AM_I);
+
+  if(who_am_i == 0xBD) {
+	  printf("Found: LPS25HB\n");
+  }
+  else {
+	  printf("Error (0x%02X)\n", who_am_i);
+  }
 
   /* USER CODE END 2 */
 
