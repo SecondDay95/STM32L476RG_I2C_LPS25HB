@@ -46,6 +46,11 @@
 #define LPS25HB_PRESS_OUT_H 	0x2A
 #define LPS25HB_TEMP_OUT_L 		0x2B
 #define LPS25HB_TEMP_OUT_H 		0x2C
+
+#define LPS25HB_CTRL_REG1_PD 	0x80
+#define LPS25HB_CTRL_REG1_ODR2 	0x40
+#define LPS25HB_CTRL_REG1_ODR1 	0x20
+#define LPS25HB_CTRL_REG1_ODR0 	0x10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -89,6 +94,13 @@ uint8_t lps_read_reg(uint8_t reg) {
 
 }
 
+//Funkcja zapisujaca wartosc do rejestru czujnika LPS25HB:
+void lps_write_reg(uint8_t reg, uint8_t value) {
+
+	HAL_I2C_Mem_Write(&hi2c1, LPS25HB_ADDR, reg, 1, &value, sizeof(value), HAL_MAX_DELAY);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -129,6 +141,17 @@ int main(void)
 
   if(who_am_i == 0xBD) {
 	  printf("Found: LPS25HB\n");
+	  //Wybudzenie czujnika i ustawienie cyklicznego pomiaru na 25Hz:
+	  lps_write_reg(LPS25HB_CTRL_REG1, LPS25HB_CTRL_REG1_PD | LPS25HB_CTRL_REG1_ODR2);
+	  HAL_Delay(100);
+
+	  int16_t temp;
+	  uint8_t temp_lsb;
+	  uint8_t temp_msb;
+	  temp_lsb = lps_read_reg(LPS25HB_TEMP_OUT_L);
+	  temp_msb = lps_read_reg(LPS25HB_TEMP_OUT_H);
+	  temp = (temp_msb << 8) | temp_lsb;
+	  printf("T = %.1f*C\n", 42.5f + temp / 480.0f);
   }
   else {
 	  printf("Error (0x%02X)\n", who_am_i);

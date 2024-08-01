@@ -61,7 +61,7 @@ main-build: 11_I2C_LPS25HB.elf secondary-outputs
 
 # Tool invocations
 11_I2C_LPS25HB.elf 11_I2C_LPS25HB.map: $(OBJS) $(USER_OBJS) C:\Users\Secon\OneDrive\Pulpit\STM32L4\Projekty\11_I2C_LPS25HB\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "11_I2C_LPS25HB.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Secon\OneDrive\Pulpit\STM32L4\Projekty\11_I2C_LPS25HB\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="11_I2C_LPS25HB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "11_I2C_LPS25HB.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Secon\OneDrive\Pulpit\STM32L4\Projekty\11_I2C_LPS25HB\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="11_I2C_LPS25HB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
