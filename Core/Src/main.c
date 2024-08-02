@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "lps25hb.h"
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -119,6 +120,12 @@ int main(void)
   }
   HAL_Delay(100);
 
+  //Wysokosc szerszen nad poziomem morza:
+  const float h = 133;
+
+  //Kalibracja czujnika LPS25HB:
+  lps25hb_set_calib(-48);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -126,8 +133,17 @@ int main(void)
   while (1)
   {
 
+	  //Wyswietlenie temperatury odczytanej z czujnika w celsjuszach:
 	  printf("T = %.1f *C\n", lps25hp_read_temp());
-	  printf("p = %.1f hPa\n", lps25hb_read_pressure());
+	  //Wyswietlenie cisnienia bezwzglednego odczytanego z czujnika:
+	  float p = lps25hb_read_pressure();
+	  printf("Pbez (cisnienie bezwzgledne) = %.1f hPa\n", p);
+	  //Obliczenie temperatury w kelwinach:
+	  float temp_k = lps25hp_read_temp() + 273.15;
+	  //Obliczenie cisnienia wzglednego:
+	  float p0 = p * exp(0.034162608734308 * h / temp_k);
+	  //Wyswietlenie cisnienia wzglednego:
+	  printf("Pwzgl (cisnienie wzgledne) = %.1f hPa\n", p0);
 	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */

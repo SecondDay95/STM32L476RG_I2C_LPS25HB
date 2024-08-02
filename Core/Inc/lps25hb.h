@@ -13,3 +13,7 @@ float lps25hp_read_temp(void);
 //Odczyt ciśnienia
 //return - wynik w hPa
 float lps25hb_read_pressure(void);
+
+//Kalibracja czujnika cisnienia
+//value - 16-bitowa korekcja pomiaru
+void lps25hb_set_calib(int16_t value);
