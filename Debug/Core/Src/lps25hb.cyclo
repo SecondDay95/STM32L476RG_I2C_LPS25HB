@@ -1,7 +1,7 @@
-../Core/Src/lps25hb.c:28:16:lps_read_reg_init	1
-../Core/Src/lps25hb.c:38:16:lps_read_reg	2
-../Core/Src/lps25hb.c:49:13:lps_write_reg	2
-../Core/Src/lps25hb.c:56:19:lps25hb_init	2
-../Core/Src/lps25hb.c:70:7:lps25hp_read_temp	1
-../Core/Src/lps25hb.c:84:7:lps25hb_read_pressure	1
-../Core/Src/lps25hb.c:100:6:lps25hb_set_calib	1
+../Core/Src/lps25hb.c:29:16:lps_read_reg_init	1
+../Core/Src/lps25hb.c:39:16:lps_read_reg	2
+../Core/Src/lps25hb.c:50:13:lps_write_reg	2
+../Core/Src/lps25hb.c:57:19:lps25hb_init	2
+../Core/Src/lps25hb.c:73:7:lps25hp_read_temp	1
+../Core/Src/lps25hb.c:87:7:lps25hb_read_pressure	1
+../Core/Src/lps25hb.c:103:6:lps25hb_set_calib	1

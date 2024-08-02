@@ -15,6 +15,7 @@
 #define LPS25HB_TEMP_OUT_H 			0x2C
 #define LPS25HB_RPDS_L 				0x39
 #define LPS25HB_RPDS_H 				0x3A
+#define LPS25HB_FIFO_CTRL			0x2E
 
 #define TIMEOUT                 	100
 
@@ -63,6 +64,8 @@ HAL_StatusTypeDef lps25hb_init(void) {
 	}
 
 	lps_write_reg(LPS25HB_CTRL_REG1, LPS25HB_CTRL_REG1_PD | LPS25HB_CTRL_REG1_ODR2);
+	lps_write_reg(LPS25HB_CTRL_REG2,  0x40);
+	lps_write_reg(LPS25HB_FIFO_CTRL,  0xDF);
 	return HAL_OK;
 
 }

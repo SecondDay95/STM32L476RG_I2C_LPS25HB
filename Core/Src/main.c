@@ -118,14 +118,16 @@ int main(void)
 	  Error_Handler();
 
   }
-  HAL_Delay(100);
+  HAL_Delay(5000);
 
   //Wysokosc szerszen nad poziomem morza:
   const float h = 133;
 
   //Kalibracja czujnika LPS25HB:
-  lps25hb_set_calib(-48);
+  //lps25hb_set_calib(-48);
 
+  //Zmierzenie cisnienia bezwzglednego wzorcowego do obliczenia wysokosci wzglednej:
+  float pwzorcowe = lps25hb_read_pressure();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -144,6 +146,14 @@ int main(void)
 	  float p0 = p * exp(0.034162608734308 * h / temp_k);
 	  //Wyswietlenie cisnienia wzglednego:
 	  printf("Pwzgl (cisnienie wzgledne) = %.1f hPa\n", p0);
+	  //Obliczenie wysokości bezwzględnej
+	  float h = -29.271769 * temp_k * log(p / p0);
+	  //Wyswietlenie wysokosci bezwzglednej
+	  printf("hbez (wysokosc bezwzgledna) = %.2f\n", h);
+	  //Obliczenie wysokosci wzglednej:
+	  float hwzgledna = -29.271769 * temp_k * log(p / pwzorcowe);
+	  //Wyswietlenie wysokosci wzglednej:
+	  printf("hwzgledna (wysokosc wzgledna) = %.2f\n", hwzgledna);
 	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */
